@@ -1,0 +1,9 @@
+
+.h-divider{
+    margin-top:20px;
+    margin-bottom:20px;
+    margin-left: 20px;
+    height:1px;
+    width:98%;
+    border-top:2px solid gray;
+}
