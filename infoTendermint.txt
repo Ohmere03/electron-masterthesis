@@ -4,13 +4,13 @@ nsd init --chain-id masterthesis
 passphrase for all: testtest01 
 
 
-nscli keys add importer (address: cosmos1qk5wp5v7ysnmrvayhe9jfe382h0zlaqkda9cux)
+nscli keys add importer (address: cosmos16prc3k89kmmrc885xrr6mlefg2yclncfrchu95	)
 
-nscli keys add exporter (address: cosmos1kge937ucf7xnatppz7feju0wuy5q20lwttsw4p)
+nscli keys add exporter (address: cosmos16prc3k89kmmrc885xrr6mlefg2yclncfrchu95)
 
 nscli keys add escrow (address: cosmos1t0djcq3s2qh77an2c58z3dypz2nhhgsqw69g9c)
 
-nscli keys add carrier (address: cosmos1knl5cnjecp26kqfwcq60tx2x7c99maqtl55j2n)
+nscli keys add carrier (address: cosmos108qvqydqzf36xvsqqy6v86tjkl5pumv4kmz95j)
 
 nsd add-genesis-account $(nscli keys show importer -a) 1000thesistoken,1000importercoin
 
@@ -49,47 +49,4 @@ Executed commands:
 nscli tx testapplication create-bol 12345 --from carrier
 nscli tx testapplication transmit-bol 12345 cosmos1kge937ucf7xnatppz7feju0wuy5q20lwttsw4p --from carrier -y
 nscli tx testapplication send-money cosmos1kge937ucf7xnatppz7feju0wuy5q20lwttsw4p 10thesistoken --from importer -y
-
-
-REST routes
-
-query an account: curl -s http://localhost:1317/auth/accounts/$(nscli keys show importer -a)
-
-
-for transmit bol:
-
-curl -XPOST -s http://localhost:1317/testapplication/test --data-binary '{"base_req":{"from":"'$(nscli keys show exporter -a)'","chain_id":"masterthesis"},"hash":"12345","owner":"'$(nscli keys show exporter -a)'","newOwner":"'$(nscli keys show importer -a)'"}' > unsignedTx.json
-NOW QUERY ADDRESS TO KNOW SEQUENCE AND ACCOUNT NUMBER
-nscli tx sign unsignedTx.json --from exporter --offline --chain-id masterthesis --sequence 0 --account-number 1 > signedTx.json
-nscli tx broadcast signedTx.json
-
-
-for create-bol:
-BaseReq rest.BaseReq `json:"base_req"`
-	Hash    string       `json:"hash"`
-	Owner   string       `json:"owner"
-
-curl -XPOST -s http://localhost:1317/testapplication/test --data-binary '{"base_req":{"from":"'$(nscli keys show exporter -a)'","chain_id":"masterthesis"},"hash":"12345","owner":"'$(nscli keys show exporter -a)'"}' > unsignedTx.json
-nscli tx sign unsignedTx.json --from exporter --offline --chain-id masterthesis --sequence 1 --account-number 1 > signedTx.json
-NOW QUERY ADDRESS TO KNOW SEQUENCE AND ACCOUNT NUMBER
-nscli tx broadcast signedTx.json
-
-for send-money:
-
-BaseReq rest.BaseReq `json:"base_req"`
-	Destination    string       `json:"destination"`
-	Amount    string       `json:"amount"`
-	Sender   string       `json:"sender"`
-
-curl -XPOST -s http://localhost:1317/testapplication/test --data-binary '{"base_req":{"from":"cosmos1qk5wp5v7ysnmrvayhe9jfe382h0zlaqkda9cux","chain_id":"masterthesis"},"destination":"cosmos1kge937ucf7xnatppz7feju0wuy5q20lwttsw4p","amount":"10thesistoken","sender":"cosmos1qk5wp5v7ysnmrvayhe9jfe382h0zlaqkda9cux"}' > unsignedTx.json
-nscli tx sign unsignedTx.json --from exporter --offline --chain-id masterthesis --sequence 0 --account-number 1 > signedTx.json
-NOW QUERY ADDRESS TO KNOW SEQUENCE AND ACCOUNT NUMBER
-nscli tx broadcast signedTx.json
-
-query bol (here12345):
-
-curl -s http://localhost:1317/testapplication/test/12345/bol
-
-query value of a hash of bol (here 12345):
-curl -s http://localhost:1317/testapplication/test/12345
 
