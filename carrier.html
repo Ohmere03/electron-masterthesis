@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>My account</title>
+    <head>
+        <script>
+    
+                window.$ = window.jquery = require("jquery");
+                window.popper = require("popper.js");
+                require("bootstrap");
+                require('./renderer.js')
+
+                const storage = require('electron-json-storage');
+            </script>
+   
+    <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="./node_modules/@fortawesome/fontawesome/styles.css"/>
+    <link rel="stylesheet" href="./assets/style/style.css"/>
+  </head>
+
+  <body>
+   <!--Navigation bar-->
+            
+   <!-- Navigation -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">
+          Application status
+            <img src="./assets/imgs/Circle_Green.png" alt=""> 
+          </a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="login.html">Back to login</a>
+
+        </ul>
+      </div>
+    </div>
+  </nav>
+    <!-- end of navbar-->
+    <div class="jumbotron jumbotron-fluid">
+        <div class="container">
+          <h1 class="display-4">Welcome to your account</h1>
+          <p class="lead">As a carrier, you can create a Bill of lading and transmit the ownership to the actor who gave you the goods. You can also query the actual owner of a bol</p>
+        </div>
+      </div>
+      <div class="container-fluid">
+
+      
+    </div>
+
+
+
+
+   <!--START OF DIFFERENT FORMS TO CREATE TRANSACTIONS--> 
+   <div class="container">
+        <div class="row">
+          <div class="col-sm">
+              <button id ="show1"type="button" class="btn btn-primary">Create Bill of lading</button>
+  
+          </div>
+          <div class="col-sm">
+              <button id ="show2"type="button" class="btn btn-primary">Transmit Bill of lading</button>
+  
+          </div>
+          <div class="col-sm">
+  
+          </div>
+        </div>
+      </div>
+  
+    
+    
+   
+     <!--ALL TRANSACTIONS FORMS-->
+     <!-- CREATE BILL OF LADING-->
+     <div class="container-fluid">
+        <form id ="form1" style="display:none">
+            
+            <div class="form-group">
+                <input class="form-control" type="text" placeholder="Choose the bill of lading you want to upload" readonly>
+              <input type="file" class="form-control-file" id="exampleFormControlFile1">
+            </div>
+            <div class="form-group">
+                <label for="exampleFormControlTextarea1">Generated hash (not yet implemented, input a hash)</label>
+                <textarea class="form-control" id="hash1" rows="1"></textarea>
+              </div>
+             
+  
+          <button type="button" class="btn btn-info" onclick="createBol()">Create and sign</button>
+          </form>
+          <script>
+            function create(){
+          console.log(document.getElementById("s1Bol").value)
+          console.log(document.getElementById('hash1').value)
+            }
+          </script>
+  
+  
+     <!-- TRANSMIT BILL OF LADING-->
+          <form id ="form2" style="display:none">
+              <div class="form-group">
+                  <label for="exampleFormControlSelect1">Choose the address you want to transmit ownership:</label>
+                  <select class="form-control" id="new">
+                    <option>importer</option>
+                    <option>exporter</option>
+                  </select>
+                </div>
+            
+                  <div class="form-group">
+                      <label for="exampleFormControlTextarea1">Hash of the bill of lading</label>
+                      <textarea class="form-control" id="hashBill" rows="1"></textarea>
+                    </div>
+  
+           
+    
+            <button type="button" onclick="transmitBol()" class="btn btn-info">Transmit and sign</button>
+  
+            </form>
+
+
+
+  <div class="h-divider"></div>
+
+
+    
+    <!--FIND HASH-->    
+    <div class="container-fluid">
+            <button id ="show4"type="button"  class="btn btn-success">Find owner of bill of lading</button>
+            <form id ="form4" style="display:none">
+    
+                  <div class="form-group">
+                      <label for="exampleFormControlTextarea1">Input hash of owner</label>
+                      <textarea class="form-control" id="queryHash" rows="1"></textarea>
+                    
+                </div>
+      
+              <button type="button" onclick="queryBolObject()" class="btn btn-info">Find</button>
+              </form>
+ 
+
+            <table class="table">
+                <thead class="thead-dark">
+                  <tr>
+                    <th scope="col">Bill of lading information</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">Owner</th>
+                    <td id ="ownerTable"></td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Hash</th>
+                    <td id ="hashTable"></td>
+                    </tr>
+                </tbody>
+              </table>
+   
+
+
+<!--START OF JAVASCRIPT CODE FOR BUTTON INTERACTION-->
+
+<script>
+    $(document).ready(function(){
+      $("#show1").click(function(){
+        $("#form1").toggle();
+      });
+    });
+
+    $(document).ready(function(){
+      $("#show2").click(function(){
+        $("#form2").toggle();
+      });
+    });
+
+    $(document).ready(function(){
+      $("#show4").click(function(){
+        $("#form4").toggle();
+      });
+    });
+    </script>
+
+<!-- sCRIPT PART CALLING QUERY AND TRANSACTIONS-->
+<script>
+
+const { exec } = require('child_process');
+
+
+//CREATE BOL
+
+function createBol(){
+    var newOwner = "cosmos108qvqydqzf36xvsqqy6v86tjkl5pumv4kmz95j";
+    var newhash = document.getElementById('hash1').value;
+    newOwner = newOwner.toString()
+    newhash = newhash.toString()
+    
+  //script for call bash script that creates new Bol and add an owner.
+
+    const myShellScript = exec('echo "testtest01" | bash ./assets/bash_scripts/transaction/createBol.sh '+newhash+' '+newOwner);
+    myShellScript.stdout.on('data', (data)=>{
+
+      console.log(data); 
+      var jsonData = JSON.parse(data)
+      return data
+    });
+    myShellScript.stderr.on('data', (data)=>{
+        console.error(data);
+    });
+  }
+
+
+//TRANSMIT BOL
+
+function transmitBol(){
+  //script for call bash script that creates new Bol and add an owner.
+
+    var hashBol = document.getElementById("hashBill").value;
+    var newOwner = document.getElementById("new").value;
+    var ownerBol = "cosmos108qvqydqzf36xvsqqy6v86tjkl5pumv4kmz95j";
+    if (newOwner== "importer"){
+      newOwner ="cosmos1nejwm3pkequ3e0pt62xgrgqz93e4p70ms7hcc7";
+
+      }
+    else if (newOwner == "exporter") {
+      newOwner ="cosmos16prc3k89kmmrc885xrr6mlefg2yclncfrchu95";
+    }
+    else{
+      alert("Invalid address"); 
+    }
+
+
+
+    const myShellScript = exec('echo "testtest01" | bash ./assets/bash_scripts/transaction/transmitBol.sh '+hashBol+' '+newOwner+' '+ownerBol);
+    myShellScript.stdout.on('data', (data)=>{
+
+      console.log(data); 
+      var jsonData = JSON.parse(data)
+      console.log(jsonData.height)
+    });
+    myShellScript.stderr.on('data', (data)=>{
+        console.error(data);
+    });
+  }
+
+
+
+
+
+
+
+//QUERY BOL
+
+  function queryBolObject(){
+  //script for call bash script that creates new Bol and add an owner.
+
+    var hash = document.getElementById("queryHash").value;
+
+    const myShellScript = exec('echo "testtest01" | bash ./assets/bash_scripts/query/queryBolObject.sh '+hash);
+    myShellScript.stdout.on('data', (data)=>{
+      
+
+      var jsonData = JSON.parse(data)
+      console.log(jsonData)
+      var ownerTable = jsonData.owner;
+          if (ownerTable == "cosmos1nejwm3pkequ3e0pt62xgrgqz93e4p70ms7hcc7"){
+            ownerTable="importer"
+    
+            }
+          else if (ownerTable == "cosmos16prc3k89kmmrc885xrr6mlefg2yclncfrchu95") {
+            ownerTable="exporter";
+          }
+          else{
+            ownerTable = "carrier";
+          }
+
+      document.getElementById("ownerTable").innerHTML = ownerTable;
+
+      document.getElementById("hashTable").innerHTML = jsonData.value;
+
+
+    });
+    myShellScript.stderr.on('data', (data)=>{
+        console.error(data);
+    });
+  }
+
+
+</script>
+
+  </body>
+
+
+
+
+
+</html>

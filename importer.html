@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>My account</title>
+    <head>
+        <script>
+    
+                window.$ = window.jquery = require("jquery");
+                window.popper = require("popper.js");
+                require("bootstrap");
+                require('./renderer.js')
+
+                const storage = require('electron-json-storage');
+            </script>
+   
+    <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="./node_modules/@fortawesome/fontawesome/styles.css"/>
+    <link rel="stylesheet" href="./assets/style/style.css"/>
+  </head>
+
+  <body>
+   <!--Navigation bar-->
+            
+   <!-- Navigation -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">
+          Application status
+            <img src="./assets/imgs/Circle_Green.png" alt=""> 
+          </a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="login.html">Back to login</a>
+
+        </ul>
+      </div>
+    </div>
+  </nav>
+    <!-- end of navbar-->
+    <div class="jumbotron jumbotron-fluid">
+            <div class="container">
+              <h1 class="display-8">Welcome importer</h1>
+              <p class="lead">As an importer, you can decide to create a sales agreement and select participants of the agreement, create a letter of credit and set the condition for the release of the money or find if you are the owner of a bill of lading</p>
+            </div>
+          </div>
+          <div class="container-fluid">   
+
+
+
+
+
+<!-- CONTENT OF PAGE-->
+
+   <!--START OF DIFFERENT FORMS TO CREATE TRANSACTIONS AND BUTTONS--> 
+   <div class="container">
+        <div class="row">
+          <div class="col-sm">
+              <button id ="show1"type="button" class="btn btn-primary">Create Sales agreement</button>
+  
+          </div>
+
+          <div class="col-sm">
+  
+     <button id ="show3"type="button" class="btn btn-primary">Create letter of credit</button>
+  
+          </div>
+        </div>
+      </div>
+  
+    
+    
+   
+     <!--ALL TRANSACTIONS FORMS-->
+     <!-- CREATE SALES AGREEMENT-->
+     <div class="container-fluid">
+        <form id ="form1" style="display:none">
+            <div class="form-group">
+            <div class="form-group">
+                <input class="form-control" type="text" placeholder="Choose the sales agreement you want to upload" readonly>
+              <input type="file" class="form-control-file" id="exampleFormControlFile1">
+            </div>
+            
+              <div class="form-group">
+                  <label for="exampleFormControlTextarea1">Generated hash </label>
+                  <!--NOT IMPLEMENTED YE, Demo hash is:
+                    94dd99458ad8e7e3b254f647d674b79015687380cdcddba3dc95f2bb8bb86de0
+                -->
+                <textarea class="form-control" id="hashSale" rows="1"></textarea>
+                <input class="form-control" type="text" placeholder="Sales agreement ID = 1000, you can find it under 'my sales agreement' "readonly>
+                </div>
+  
+          <button type="button" class="btn btn-info" onclick="createSale()">Approve and sign</button>
+          </form>
+  
+  </div>
+
+     <!-- MAKE PAYMENT-->
+  
+            <form id ="form3" style="display:none">
+                <div class="form-group">
+                        <div class="form-group">
+                                <label for="exampleFormControlTextarea1">Enter Id of bill of lading for the letter of credit (can be find under actual_bill of lading) </label>
+                              <textarea class="form-control" id="hashSale" rows="1"></textarea>
+                             </div>
+                    <label for="exampleFormControlSelect1">Choose the recipient</label>
+                    <select class="form-control" id="paymentaddress">
+                      <option>Exporter</option>
+                      <option>Smart contract escrow payment</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                      <label >Enter amount</label>
+                      <input type="number" class="form-control" id="amount" placeholder="Enter amount of coins">
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleFormControlSelect1">Select condition</label>
+                        <select class="form-control" id="sentFrom">
+                          <option>Pay immediately</option>
+                          <option>Pay when the bill of lading is in my possesion</option>
+                        </select>
+                      </div>
+      
+              <button type="button" onclick="sendAmount()" class="btn btn-info">Sign letter of credit and pay</button>
+              </form>
+  
+      
+  
+    </div>
+    <div class="h-divider"></div>
+  
+  
+      
+      <!--FIND HASH-->    
+      <div class="container-fluid">
+              <button id ="show4"type="button"  class="btn btn-success">Find owner of bill of lading</button>
+              <form id ="form4" style="display:none">
+      
+                    <div class="form-group">
+                        <label for="exampleFormControlTextarea1">Input Bill of lading ID</label>
+                        <textarea class="form-control" id="queryHash" rows="1"></textarea>
+                      
+                  </div>
+        
+                <button type="button" onclick="queryBolObject()" class="btn btn-info">Find</button>
+                </form>
+   
+  
+              <table class="table">
+                  <thead class="thead-dark">
+                    <tr>
+                      <th scope="col">Bill of lading information</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <th scope="row">Owner</th>
+                      <td id ="ownerTable"></td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Hash</th>
+                      <td id ="hashTable"></td>
+                      </tr>
+                  </tbody>
+                </table>
+        
+        
+        
+        
+        
+        
+  
+  
+        
+      </div>
+
+   
+
+
+<!--START OF JAVASCRIPT CODE FOR BUTTON INTERACTION-->
+
+<script>
+
+    $(document).ready(function(){
+      $("#show3").click(function(){
+        $("#form3").toggle();
+      });
+    $(document).ready(function(){
+      $("#show1").click(function(){
+        $("#form1").toggle();
+      });
+    });
+    });
+    $(document).ready(function(){
+      $("#show4").click(function(){
+        $("#form4").toggle();
+      });
+    });
+    </script>
+
+<!-- sCRIPT PART CALLING QUERY AND TRANSACTIONS-->
+<script>
+
+const { exec } = require('child_process');
+
+   function createSale(){
+    alert("The sales agreement was created"); 
+   }
+
+
+  function sendAmount(){
+  //script for call bash script that creates new Bol and add an owner.
+
+
+    var destination = "cosmos1xy3qrl6rpcqttseea229vwucvgc362483fhdlc";
+    var amount = document.getElementById("amount").value;
+    var amount = amount+"thesistoken";
+    var from = "cosmos1nejwm3pkequ3e0pt62xgrgqz93e4p70ms7hcc7";
+    console.log(from)
+
+    const myShellScript = exec('echo "testtest01" | bash ./assets/bash_scripts/transaction/sendAmount.sh '+destination+' '+amount+' '+from);
+    myShellScript.stdout.on('data', (data)=>{
+
+      console.log(data); 
+    });
+    myShellScript.stderr.on('data', (data)=>{
+        console.error(data);
+    });
+  }
+
+  function queryBolObject(){
+  //script for call bash script that creates new Bol and add an owner.
+
+    //"1bfc6e493241dd6c18bbc4b916a6dae1e6ee5b34127407b7a82573cc1ec71e3e";
+    var hash = document.getElementById("queryHash").value;
+    const myShellScript = exec('echo "testtest01" | bash ./assets/bash_scripts/query/queryBolObject.sh '+hash);
+    myShellScript.stdout.on('data', (data)=>{
+      
+
+      var jsonData = JSON.parse(data)
+      console.log(jsonData)
+
+      var ownerTable = jsonData.owner;
+          if (ownerTable == "cosmos1nejwm3pkequ3e0pt62xgrgqz93e4p70ms7hcc7"){
+            ownerTable="importer"
+    
+            }
+          else if (ownerTable == "cosmos16prc3k89kmmrc885xrr6mlefg2yclncfrchu95") {
+            ownerTable="exporter";
+          }
+          else{
+            ownerTable = "carrier";
+          }
+
+      document.getElementById("ownerTable").innerHTML = ownerTable;
+
+      document.getElementById("hashTable").innerHTML = jsonData.value;
+
+
+    });
+    myShellScript.stderr.on('data', (data)=>{
+        console.error(data);
+    });
+  }
+
+
+</script>
+
+  </body>
+
+
+
+
+
+</html>

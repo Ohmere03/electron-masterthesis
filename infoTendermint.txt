@@ -4,13 +4,13 @@ nsd init --chain-id masterthesis
 passphrase for all: testtest01 
 
 
-nscli keys add importer (address: cosmos16prc3k89kmmrc885xrr6mlefg2yclncfrchu95	)
+nscli keys add importer (address: cosmos1nejwm3pkequ3e0pt62xgrgqz93e4p70ms7hcc7	)
 
 nscli keys add exporter (address: cosmos16prc3k89kmmrc885xrr6mlefg2yclncfrchu95)
 
-nscli keys add escrow (address: cosmos1t0djcq3s2qh77an2c58z3dypz2nhhgsqw69g9c)
+nscli keys add escrow (address: cosmos1xy3qrl6rpcqttseea229vwucvgc362483fhdlc)
 
-nscli keys add carrier (address: cosmos108qvqydqzf36xvsqqy6v86tjkl5pumv4kmz95j)
+nscli keys add carrier (address: cosmos108qvqydqzf36xvsqqy6v86tjkl5pumv4kmz95j	)
 
 nsd add-genesis-account $(nscli keys show importer -a) 1000thesistoken,1000importercoin
 

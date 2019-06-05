@@ -44,7 +44,7 @@
     <!-- end of navbar-->
     <div class="jumbotron jumbotron-fluid">
         <div class="container">
-          <h1 class="display-4">Global overview</h1>
+          <h1 class="display-4">Admin</h1>
           <p class="lead">This page gives a global overview of the different queries and transactions available aswell as provide the address, available amount and public key of the Exporter, Importer and the escrow</address></p>
         </div>
       </div>
@@ -127,20 +127,20 @@
           <div class="form-group">
               <label for="exampleFormControlSelect1">Choose your address</label>
               <select class="form-control" id="s1Bol">
-                <option>cosmos1qk5wp5v7ysnmrvayhe9jfe382h0zlaqkda9cux</option>
-                <option>cosmos1kge937ucf7xnatppz7feju0wuy5q20lwttsw4p</option>
-                <option>cosmos1knl5cnjecp26kqfwcq60tx2x7c99maqtl55j2n</option>
+                <option>importer</option>
+                <option>exporter</option>
+                <option>escrow</option>
               </select>
             </div>
           <div class="form-group">
               <input class="form-control" type="text" placeholder="Choose the bill of lading you want to upload" readonly>
             <input type="file" class="form-control-file" id="exampleFormControlFile1">
           </div>
-          
-            <div class="form-group">
-                <label for="exampleFormControlTextarea1">Generated hash (not yet implemented, input a hash)</label>
-                <textarea class="form-control" id="hash1" rows="1"></textarea>
-              </div>
+          <div class="form-group">
+              <label for="exampleFormControlTextarea1">Generated hash (not yet implemented, input a hash)</label>
+              <textarea class="form-control" id="hash1" rows="1"></textarea>
+            </div>
+           
 
         <button type="button" class="btn btn-info" onclick="createBol()">Create</button>
         </form>
@@ -156,34 +156,39 @@
         <form id ="form2" style="display:none">
             <div class="form-group">
                 <label for="exampleFormControlSelect1">Choose the address you want to transmit ownership:</label>
-                <select class="form-control" id="exampleFormControlSelect1">
-                  <option>cosmos1qk5wp5v7ysnmrvayhe9jfe382h0zlaqkda9cux</option>
-                  <option>cosmos1kge937ucf7xnatppz7feju0wuy5q20lwttsw4p</option>
+                <select class="form-control" id="new">
+                  <option>importer</option>
+                  <option>exporter</option>
                 </select>
               </div>
-
               <div class="form-group">
-                  <label for="exampleFormControlTextarea1">Input the same hash as previously)</label>
-                  <textarea class="form-control" id="exampleFormControlTextarea1" rows="1"></textarea>
-                
-            </div>
+                  <label for="exampleFormControlSelect1">Choose actual owner:</label>
+                  <select class="form-control" id="actual">
+                    <option>carrier</option>
+                    <option>importer</option>
+                    <option>exporter</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                    <label for="exampleFormControlTextarea1">Hash of the bill of lading</label>
+                    <textarea class="form-control" id="hashBill" rows="1"></textarea>
+                  </div>
+
+         
   
           <button type="button" onclick="transmitBol()" class="btn btn-info">Transmit</button>
-          <script>/*
-              console.log(document.getElementById("").value)
-              console.log(document.getElementById("").value)*/
-              </script>
+
           </form>
 
    <!-- MAKE PAYMENT-->
 
           <form id ="form3" style="display:none">
               <div class="form-group">
-                  <label for="exampleFormControlSelect1">Choose the address</label>
+                  <label for="exampleFormControlSelect1">Choose recipient</label>
                   <select class="form-control" id="paymentaddress">
-                    <option>cosmos1qk5wp5v7ysnmrvayhe9jfe382h0zlaqkda9cux</option>
-                    <option>cosmos1kge937ucf7xnatppz7feju0wuy5q20lwttsw4p</option>
-                    <option>Escrow</option>
+                    <option>importer</option>
+                    <option>exporter</option>
+                    <option>escrow</option>
                   </select>
                 </div>
                 <div class="form-group">
@@ -193,9 +198,9 @@
                   <div class="form-group">
                       <label for="exampleFormControlSelect1">Sent from</label>
                       <select class="form-control" id="sentFrom">
-                        <option>cosmos1qk5wp5v7ysnmrvayhe9jfe382h0zlaqkda9cux</option>
-                        <option>cosmos1kge937ucf7xnatppz7feju0wuy5q20lwttsw4p</option>
-                        <option>Escrow</option>
+                        <option>importer</option>
+                        <option>exporter</option>
+                        <option>escrow</option>
                       </select>
                     </div>
     
@@ -261,7 +266,7 @@
     console.log(dir)
     storage.setDataPath(dir);
 
-    storage.set('foobar', { foo: 'bar' }, function(error) {
+    storage.set('addresses', { foo: 'bar' }, function(error) {
       if (error) throw error;
     });
 
@@ -331,6 +336,19 @@ window.setInterval(function(){
   //carrier cosmos1knl5cnjecp26kqfwcq60tx2x7c99maqtl55j2n
 
     var newOwner = document.getElementById("s1Bol").value;
+    if (newOwner == "importer"){
+            newOwner ="cosmos1nejwm3pkequ3e0pt62xgrgqz93e4p70ms7hcc7";
+    
+            }
+          else if (newOwner == "cosmos16prc3k89kmmrc885xrr6mlefg2yclncfrchu95") {
+            newOwner ="";
+          }
+          else if (newOwner == "escrow") {
+            newOwner ="cosmos1xy3qrl6rpcqttseea229vwucvgc362483fhdlc";
+          }
+          else{
+            alert("Invalid address"); 
+          }
     var newhash = document.getElementById('hash1').value;
     newOwner = newOwner.toString()
     newhash = newhash.toString()
@@ -350,9 +368,34 @@ window.setInterval(function(){
   }
   function transmitBol(){
   //script for call bash script that creates new Bol and add an owner.
-    var hashBol = "testtest";
-    var newOwner = "cosmos1knl5cnjecp26kqfwcq60tx2x7c99maqtl55j2n";
-    var ownerBol = "importer";
+
+    var hashBol = document.getElementById("hashBill").value;
+    var newOwner = document.getElementById("new").value;
+    var ownerBol = document.getElementById("actual").value;
+    if (newOwner== "importer"){
+      newOwner ="cosmos1nejwm3pkequ3e0pt62xgrgqz93e4p70ms7hcc7";
+
+      }
+    else if (newOwner == "exporter") {
+      newOwner ="cosmos16prc3k89kmmrc885xrr6mlefg2yclncfrchu95";
+    }
+    else{
+      alert("Invalid address"); 
+    }
+
+    if (ownerBol == "importer"){
+      ownerBol ="cosmos1nejwm3pkequ3e0pt62xgrgqz93e4p70ms7hcc7";
+
+      }
+    else if (ownerBol == "exporter") {
+      ownerBol ="cosmos16prc3k89kmmrc885xrr6mlefg2yclncfrchu95";
+    }
+    else if (ownerBol == "carrier") {
+      ownerBol ="cosmos108qvqydqzf36xvsqqy6v86tjkl5pumv4kmz95j";
+    }
+    else{
+      alert("Invalid address"); 
+    }
 
 
     const myShellScript = exec('echo "testtest01" | bash ./assets/bash_scripts/transaction/transmitBol.sh '+hashBol+' '+newOwner+' '+ownerBol);
@@ -372,10 +415,35 @@ window.setInterval(function(){
 
 
     var destination = document.getElementById("paymentaddress").value;
+
+    if (destination == "importer"){
+            destination ="cosmos1nejwm3pkequ3e0pt62xgrgqz93e4p70ms7hcc7";
+    
+            }
+          else if (destination == "exporter") {
+            destination ="cosmos16prc3k89kmmrc885xrr6mlefg2yclncfrchu95";
+          }
+          else if (destination == "escrow") {
+            destination ="cosmos1xy3qrl6rpcqttseea229vwucvgc362483fhdlc";
+          }
+          else{
+            alert("Invalid address"); 
+          }
     console.log(destination)
     var amount = document.getElementById("amount").value;
     var amount = amount+"thesistoken";
     var from = document.getElementById("sentFrom").value;
+
+    if (from == "importer"){
+            from ="cosmos1nejwm3pkequ3e0pt62xgrgqz93e4p70ms7hcc7";
+    
+            }
+          else if (from == "exporter") {
+            from ="cosmos16prc3k89kmmrc885xrr6mlefg2yclncfrchu95";
+          }
+          else{
+            alert("Invalid address"); 
+          }
     console.log(from)
 
     const myShellScript = exec('echo "testtest01" | bash ./assets/bash_scripts/transaction/sendAmount.sh '+destination+' '+amount+' '+from);
@@ -458,8 +526,19 @@ window.setInterval(function(){
 
       var jsonData = JSON.parse(data)
       console.log(jsonData)
+      var ownerTable = jsonData.owner;
+          if (ownerTable == "cosmos1nejwm3pkequ3e0pt62xgrgqz93e4p70ms7hcc7"){
+            ownerTable="importer"
+    
+            }
+          else if (ownerTable == "cosmos16prc3k89kmmrc885xrr6mlefg2yclncfrchu95") {
+            ownerTable="exporter";
+          }
+          else{
+            ownerTable = "carrier";
+          }
 
-      document.getElementById("ownerTable").innerHTML = jsonData.owner;
+      document.getElementById("ownerTable").innerHTML = ownerTable;
 
       document.getElementById("hashTable").innerHTML = jsonData.value;
 
