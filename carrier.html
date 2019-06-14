@@ -15,7 +15,6 @@
             </script>
    
     <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="./node_modules/@fortawesome/fontawesome/styles.css"/>
     <link rel="stylesheet" href="./assets/style/style.css"/>
   </head>
 
@@ -86,7 +85,8 @@
               <input type="file" class="form-control-file" id="exampleFormControlFile1">
             </div>
             <div class="form-group">
-                <label for="exampleFormControlTextarea1">Generated hash (not yet implemented, input a hash)</label>
+                <label for="exampleFormControlTextarea1">Generated hash</label>
+                <input class="form-control" type="text" placeholder="Bill of lading ID = 200, you can find it under 'my bills of lading' "readonly>
                 <textarea class="form-control" id="hash1" rows="1"></textarea>
               </div>
              
@@ -112,7 +112,7 @@
                 </div>
             
                   <div class="form-group">
-                      <label for="exampleFormControlTextarea1">Hash of the bill of lading</label>
+                      <label for="exampleFormControlTextarea1">ID of the bill of lading</label>
                       <textarea class="form-control" id="hashBill" rows="1"></textarea>
                     </div>
   
@@ -134,7 +134,7 @@
             <form id ="form4" style="display:none">
     
                   <div class="form-group">
-                      <label for="exampleFormControlTextarea1">Input hash of owner</label>
+                      <label for="exampleFormControlTextarea1">Input ID of bill of lading</label>
                       <textarea class="form-control" id="queryHash" rows="1"></textarea>
                     
                 </div>

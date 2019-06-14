@@ -1,10 +1,14 @@
 {
-  "name": "electron-quick-start",
+  "name": "master-thesis-app",
   "version": "1.0.0",
   "description": "A minimal Electron application",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=assets/icons/mac/icon.icns --prune=true --out=release-builds",
+    "package-win": "electron-packager . master-thesis-app --overwrite --asar --platform=win32 --arch=ia32 --icon=assets/icons/win/icon.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"master-thesis-app\"",
+    "package-linux": "electron-packager . master-thesis-app --overwrite --asar --platform=linux --arch=x64 --icon=assets/icons/icon.png --prune=true --out=release-builds",
+    "package-all-the-things": "npm run package-mac; npm run package-win; npm run package-linux"
   },
   "repository": "https://github.com/electron/electron-quick-start",
   "keywords": [
@@ -14,7 +18,7 @@
     "tutorial",
     "demo"
   ],
-  "author": "GitHub",
+  "author": "Ohmere03",
   "license": "CC0-1.0",
   "devDependencies": {
     "electron": "^5.0.0"
@@ -33,6 +37,8 @@
     "remote": "^0.2.6",
     "request": "^2.88.0",
     "request-promise": "^4.2.4",
-    "tablesort": "^5.1.0"
+    "tablesort": "^5.1.0",
+    "electron-packager": "^13.1.1",
+    "fresh": "^0.5.2"
   }
 }
